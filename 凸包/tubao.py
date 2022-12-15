@@ -8,6 +8,7 @@ def tubao(trees) -> list[list[int]]:
     def judge_turn(p1:list[int], p2:list[int], p3:list[int]):
         '''
         用于计算选中的三个点是否有一种“左拐/逆时针的趋势”,本质是斜率的比较
+        
         Args:
             points locations [x,y]
         Return:
