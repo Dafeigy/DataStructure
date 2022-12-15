@@ -9,12 +9,12 @@ uniform_cube = chaospy.J(chaospy.Uniform(0, 1), chaospy.Uniform(0, 1))
 
 if __name__ == '__main__':
 
-    sample_min = 100
-    sample_max = 100000
+    sample_min = 10
+    sample_max = 1000
     err_random_list = []
     err_quasi_list  = []
 
-    for sample_num in tqdm(range(sample_min, sample_max+1, 100)):
+    for sample_num in tqdm(range(sample_min, sample_max+1)):
         random_samples = uniform_cube.sample(sample_num, rule="random", seed=20221215)
         halton_samples = uniform_cube.sample(sample_num, rule="halton", seed=20221215)
         x_random,y_random = random_samples
