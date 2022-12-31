@@ -4,33 +4,24 @@ import numpy as np
 import math
 
 
-random.seed(20221231)
-
 def generate_cities(N):
     '''
-    生成N个城市
+    生成N个城市。
     '''
     random_list = list(itertools.product(range(1, N), range(1, N)))
     return random.sample(random_list, N)
 
 def calculate_distance(p1,p2):
     '''
-    计算点之间的距离的平方
+    计算点之间的距离的平方，不开根号减少计算量。
     '''
     return sum([(x-y)**2 for x,y in zip(p1,p2)])
 
-def generate_dmatrix(cities:list[list[int]]):
-    N = len(cities)
-    print(N)
-    dmatrix = np.zeros([N,N])
-    for i in range(N):
-        for j in range(i+1,N):
-            temp = np.array(cities[i]) - np.array(cities[j])
-            dmatrix[i, j] = np.dot(temp, temp)
-            dmatrix[j, i] = dmatrix[i, j]
-    return dmatrix
 
-def generate_dmatrix_fromlist(cities):
+def generate_dmatrix(cities:list[list[int]] or list[list[float]]):
+    '''
+    生成距离矩阵。
+    '''
     N = len(cities)
     dmatrix = [[0.] * N for _ in range(N)]
     for i in range(N):
@@ -39,11 +30,27 @@ def generate_dmatrix_fromlist(cities):
             dmatrix[j][i] = dmatrix[i][j]
     return dmatrix
 
+def generate_hex(p:list[list[int or float]], r:int or float):
+    '''
+    产生六边形坐标。
+    Args:
+        p: 六边形中点坐标。
+        r: 六边形边长
+    '''
+    x,y = p[0],p[1]
+    p1 = [x - 0.5*r, y - 0.5 * math.sqrt(3) * r]
+    p2 = [x - 1*r, y]
+    p3 = [x - 0.5*r, y + 0.5 * math.sqrt(3)* r]
+    p4 = [x + 0.5*r, y + 0.5 * math.sqrt(3)* r]
+    p5 = [x + 1*r, y ]
+    p6 = [x + 0.5*r, y - 0.5 * math.sqrt(3)* r]
+    return p1,p2,p3,p4,p5,p6
+
 
 if __name__ == '__main__':
     random.seed(20221231)
     cities = generate_cities(10)
-    dmatrix = generate_dmatrix_fromlist(cities)
+    dmatrix = generate_dmatrix(cities)
     print(cities)
     print(dmatrix)
     '''

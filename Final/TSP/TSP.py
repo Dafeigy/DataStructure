@@ -5,13 +5,36 @@ import itertools
 import random
 import math
 
-# random.seed(20221231)
+random.seed(20221231)
 
+def generate_cities(N):
+    '''
+    生成N个城市
+    '''
+    random_list = list(itertools.product(range(1, N), range(1, N)))
+    return random.sample(random_list, N)
 
-import random
+def calculate_distance(p1,p2):
+    '''
+    计算点之间的距离的平方
+    '''
+    return sum([(x-y)**2 for x,y in zip(p1,p2)])
+
+def generate_dmatrix(cities:list[list[int]] or list[list[float]]):
+    '''
+    生成距离矩阵。
+    '''
+    N = len(cities)
+    dmatrix = [[0.] * N for _ in range(N)]
+    for i in range(N):
+        for j in range(i+1, N):
+            dmatrix[i][j] = calculate_distance(cities[i],cities[j])
+            dmatrix[j][i] = dmatrix[i][j]
+    return dmatrix
 
 # PARAMS
-gen_length = 10
+N = 10
+gen_length = N
 dmatrix = []
 prob_mutate = .4
 individuals_num = 60
@@ -23,7 +46,12 @@ class Individual():
         '''
         个体类，包含个体的核心特征`gene`和计算适应度的功能。
         '''
-        self.gene = gene if gene is not None else random.shuffle([_ for _ in range(gen_length)])
+        if gene is not None:
+            self.gene = gene 
+        else:
+            temp = [_ for _ in range(gen_length)]
+            random.shuffle(temp)
+            self.gene = temp
         self.fitness = self.calculate_fitness()
 
     def calculate_fitness(self):
@@ -33,8 +61,8 @@ class Individual():
         \\frac{1}{\sum_{i=1}^{N-1}d_{i,i+1}}
         $
         '''
-        return 1/(sum([dmatrix[self.gene[i],self.gene[i+1]] for i in range(gen_length-1)]) \
-            + dmatrix[self.gene[-1],self.gene[0]])
+        return 1/(sum([dmatrix[self.gene[i]][self.gene[i+1]] for i in range(gen_length-1)]) \
+            + dmatrix[self.gene[-1]][self.gene[0]])
 
 class GA():
     def __init__(self,dmatrix) -> None:
@@ -59,7 +87,7 @@ class GA():
         '''
         for each in next_gen:
             if random.random()<prob_mutate:
-                prev_gene = each.copy()
+                prev_gene = each.gene.copy()
                 start_index = random.randint(0,gen_length -2)
                 end_index = random.randint(start_index, gen_length -1)
                 mutate_gene = prev_gene[start_index:end_index]
@@ -90,7 +118,7 @@ class GA():
             # 交叉
             for j in range(start_index, end_index):
                 vf,vm = f_gene[j], m_gene[j]
-                pos_f, pos_m = f_hash[pos_m], m_hash[pos_f]
+                pos_f, pos_m = f_hash[vm], m_hash[vf]
                 f_gene[j], f_gene[pos_f] = f_gene[pos_f], f_gene[j]
                 m_gene[j], m_gene[pos_m] = m_gene[pos_m], m_gene[j]
                 # 更新Hashmap
@@ -114,9 +142,9 @@ class GA():
             for j in range(group_size):
                 # 随机组成小组
                 player = random.choice(self.individuals)
-                player = Individual(player.genes)
+                player = Individual(player.gene)
                 group.append(player)
-            group = sorted(group)
+            group = sorted(group,key=lambda x:x.gene)
             # 取出获胜者
             winners += group[:group_winner]
         self.individuals = winners
@@ -152,9 +180,17 @@ class GA():
             result.append(result[0])
 
             self.results.append(result)
-            self.best_fiteness.append(self.best.fiteness)
+            self.best_fiteness.append(self.best.fitness)
         
         return self.results, self.best_fiteness
+
+if __name__ == "__main__":
+    '''
+    1/(sum([dmatrix[self.gene[i]][self.gene[i+1]] for i in range(gen_length-1)]) \
+            + dmatrix[self.gene[-1]][self.gene[0]])
+    '''
+    
+
         
             
 
