@@ -1,6 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 import seaborn as sns
+import utils
 import itertools
 import random
 import math
@@ -185,10 +186,23 @@ class GA():
         return self.results, self.best_fiteness
 
 if __name__ == "__main__":
-    '''
-    1/(sum([dmatrix[self.gene[i]][self.gene[i+1]] for i in range(gen_length-1)]) \
-            + dmatrix[self.gene[-1]][self.gene[0]])
-    '''
+    N = 100
+    gen_length = N
+    prob_mutate = .3
+    individuals_num = 60
+    epoch_num = 500
+
+    cities = utils.generate_cities(N)
+    # cities = [[0,1],[1,2],[2,2],[1,0],[3,1],[2,0],[0.5,1]]
+    # cities = utils.generate_hex([0,0],1)
+    # cities += utils.generate_hex([0,0],5)
+    dmatrix = utils.generate_dmatrix(cities)
+
+    algorithm = GA(dmatrix)
+    result_list, fitness_list = algorithm.train(epoch_num)
+    result = result_list[-1]
+    result_pos_list = [cities[each] for each in result]
+
     
 
         
