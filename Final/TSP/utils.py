@@ -13,9 +13,9 @@ def generate_cities(N):
 
 def calculate_distance(p1,p2):
     '''
-    计算点之间的距离的平方，不开根号减少计算量。
+    计算点之间的距离。
     '''
-    return sum([(x-y)**2 for x,y in zip(p1,p2)])
+    return math.sqrt(sum([(x-y)**2 for x,y in zip(p1,p2)]))
 
 
 def generate_dmatrix(cities:list[list[int]] or list[list[float]]):
